@@ -1,3 +1,6 @@
+<?php require_once("../resources/config.php");  ?>
+<?php require_once(TEMPLATE_FRONT . DS . "header.php"); ?>
+
 <?php
 header("Pragma: no-cache");
 header("Cache-Control: no-cache");
@@ -22,7 +25,12 @@ $isValidChecksum = verifychecksum_e($paramList, PAYTM_MERCHANT_KEY, $paytmChecks
 if($isValidChecksum == "TRUE") {
 //	echo "<b>Checksum matched and following are the transaction details:</b>" . "<br/>";
 	if ($_POST["STATUS"] == "TXN_SUCCESS") {
-		echo "<b>Transaction is successfull</b>" . "<br/>";
+		echo " <div class='container'>
+
+       <div class='row ''><b>Transaction is successfull</b>" . "<br/> </div>
+        
+        
+    </div>";
 		//Process your transaction here as success transaction.
 		//Verify amount & order id received from Payment gateway with your application's order id and amount
 
@@ -40,21 +48,42 @@ if($isValidChecksum == "TRUE") {
     $query=query($sql);
 confirm($query);
 
+
 $query2=query("SELECT * from orders where ORDERID='". escape_string($_POST['ORDERID']) ."' LIMIT 1 ");
 confirm($query2);
 
 $row=fetch_array($query2);
-echo "<p> Your transaction id is " . $row['ORDERID'] . "</p>";
-echo "<p> Your transaction status is " . $row['STATUS'] . "</p>";
-echo "<p> Your transaction amount is " . $row['TXNAMOUNT'] . "</p>";
-echo "<p> Your transaction date is " . $row['TXN_DATE'] . "</p>";
+//echo "<p> Your transaction id is " . $row['ORDERID'] . "</p>";
+//echo "<p> Your transaction status is " . $row['STATUS'] . "</p>";
+//echo "<p> Your transaction amount is " . $row['TXNAMOUNT'] . "</p>";
+//echo "<p> Your transaction date is " . $row['TXN_DATE'] . "</p>";
 
 
-	}
-	else {
-		echo "<b>Transaction status is failure</b>" . "<br/>";
-	}
+//	}
+//	else {
+//		echo "<b>Transaction status is failure</b>" . "<br/>";
+//	} 
+	$response = <<<DELIMITER
+	 <div class="container">
 
+        
+        
+        <div class="row ">
+<p> Your transaction id is {$row['ORDERID']} </p>
+<p> Your transaction status is {$row['STATUS']} </p>
+<p> Your transaction amount is {$row['TXNAMOUNT']} </p>
+<p> Your transaction date is  {$row['TXN_DATE']} </p>
+
+ </div>
+        
+        
+    </div>
+DELIMITER;
+echo $response;
+}
+else {
+		echo "<b>Transaction status is failure</b> <br/>" ;
+	}  
 	/*if (isset($_POST) && count($_POST)>0 )
 	{ 
 		foreach($_POST as $paramName => $paramValue) {
@@ -69,4 +98,6 @@ else {
 	//Process transaction as suspicious.
 }
 
+session_destroy();
 ?>
+<?php require_once(TEMPLATE_FRONT . DS . "footer.php"); ?>
